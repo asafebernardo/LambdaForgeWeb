@@ -1,0 +1,213 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  AUTHOR
+  ADMIN
+}
+
+enum ModStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum MediaType {
+  SCREENSHOT
+  VIDEO
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  username     String    @unique
+  passwordHash String
+  role         UserRole  @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  profile   Profile?
+  mods      Mod[]
+  ratings   Rating[]
+  comments  Comment[]
+  downloads DownloadEvent[]
+}
+
+model Profile {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  avatarUrl String?
+  bannerUrl String?
+  bio       String?
+  website   String?
+  twitter   String?
+  github    String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Game {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  steamAppId  Int?
+  coverUrl    String?
+  createdAt   DateTime @default(now())
+
+  mods       Mod[]
+  categories Category[]
+}
+
+model Category {
+  id     String @id @default(cuid())
+  name   String
+  slug   String
+  gameId String?
+
+  game Game? @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  mods Mod[]
+
+  @@unique([slug, gameId])
+}
+
+model Tag {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+
+  mods ModTag[]
+}
+
+model Mod {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  description   String
+  status        ModStatus @default(DRAFT)
+  gameId        String
+  authorId      String
+  categoryId    String?
+  downloadCount Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  game         Game            @relation(fields: [gameId], references: [id])
+  author       User            @relation(fields: [authorId], references: [id])
+  category     Category?       @relation(fields: [categoryId], references: [id])
+  versions     ModVersion[]
+  media        ModMedia[]
+  tags         ModTag[]
+  dependencies ModDependency[] @relation("ModDependencies")
+  dependents   ModDependency[] @relation("ModDependents")
+  ratings      Rating[]
+  comments     Comment[]
+  downloads    DownloadEvent[]
+
+  @@index([gameId])
+  @@index([authorId])
+  @@index([status])
+  @@index([updatedAt])
+}
+
+model ModVersion {
+  id        String   @id @default(cuid())
+  modId     String
+  version   String
+  changelog String?
+  createdAt DateTime @default(now())
+
+  mod   Mod       @relation(fields: [modId], references: [id], onDelete: Cascade)
+  files ModFile[]
+
+  @@unique([modId, version])
+}
+
+model ModFile {
+  id         String @id @default(cuid())
+  versionId  String
+  storageKey String
+  filename   String
+  sizeBytes  Int
+  mimeType   String
+
+  version ModVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
+
+model ModMedia {
+  id         String    @id @default(cuid())
+  modId      String
+  type       MediaType @default(SCREENSHOT)
+  storageKey String?
+  url        String?
+  sortOrder  Int       @default(0)
+
+  mod Mod @relation(fields: [modId], references: [id], onDelete: Cascade)
+}
+
+model ModTag {
+  modId String
+  tagId String
+
+  mod Mod @relation(fields: [modId], references: [id], onDelete: Cascade)
+  tag Tag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([modId, tagId])
+}
+
+model ModDependency {
+  modId          String
+  dependsOnModId String
+
+  mod          Mod @relation("ModDependencies", fields: [modId], references: [id], onDelete: Cascade)
+  dependsOnMod Mod @relation("ModDependents", fields: [dependsOnModId], references: [id], onDelete: Cascade)
+
+  @@id([modId, dependsOnModId])
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  userId    String
+  modId     String
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mod  Mod  @relation(fields: [modId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, modId])
+  @@index([modId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  modId     String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mod  Mod  @relation(fields: [modId], references: [id], onDelete: Cascade)
+
+  @@index([modId])
+}
+
+model DownloadEvent {
+  id        String   @id @default(cuid())
+  modId     String
+  userId    String?
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  mod  Mod   @relation(fields: [modId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([modId])
+}

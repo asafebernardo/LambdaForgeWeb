@@ -1,53 +1,102 @@
-# Lambda Forge
+# Lambda Forge Web
 
-Plataforma moderna de gerenciamento, distribuição e instalação de mods para jogos — com foco em experiência do usuário, facilidade de instalação e ferramentas para criadores de conteúdo.
+Mod platform and launcher website for indie and sandbox games.
 
-## Visão
+## Stack
 
-Criar uma alternativa relevante às grandes plataformas de modding, começando por comunidades menores e expandindo gradualmente. O objetivo inicial é ser a melhor plataforma para uma comunidade específica antes de escalar.
+| Technology | Use |
+|------------|-----|
+| **Turborepo + pnpm** | Monorepo |
+| **Next.js 15** | Website (`apps/web`) |
+| **NestJS** | REST API (`apps/api`, `/v1`) |
+| **PostgreSQL + Prisma** | Database |
+| **Redis** | Rate limiting / cache |
+| **MinIO** | Object storage (dev S3) |
+| **Meilisearch** | Mod search |
+| `@lambda-forge/types` | Shared types |
+| `@lambda-forge/sdk` | API client for web |
 
-## Componentes
+Full stack reference: [docs/TECNOLOGIAS.md](docs/TECNOLOGIAS.md)
 
-| Componente | Status | Descrição |
-|------------|--------|-----------|
-| **Plataforma Web** | Prioridade inicial | Cadastro, perfis, upload de mods, comentários, avaliações, pesquisa e descoberta de conteúdo |
-| **API Central** | Em planejamento | Autenticação, mods, usuários, downloads, estatísticas — única fonte de dados para site e launcher |
-| **Launcher Desktop** | Futuro | Instalação e atualização automática de mods, dependências, backup e perfis de configuração |
+## Pages
 
-A plataforma web funciona de forma independente, mesmo sem o launcher.
+| Route | Description |
+|-------|-------------|
+| `/` | Launcher landing + supported games |
+| `/download` | Launcher installer download |
+| `/mods` | Global mod catalog with filters |
+| `/games/[slug]` | Mods for one game |
+| `/mods/[slug]` | Mod detail, ratings, comments |
+| `/mods/upload` | Upload flow (auth required) |
+| `/login`, `/register` | Accounts |
+| `/users/[username]` | Author profile |
 
-## Público inicial
+## Development
 
-Comunidades de jogos baseados em **Source Engine**:
+### 1. Environment
 
-- Half-Life
-- Portal
-- Garry's Mod
-- Sven Co-op
-- Outros títulos da engine
+```bash
+cp .env.example .env
+```
 
-## Diferencial
+### 2. Infrastructure (PostgreSQL, Redis, MinIO, Meilisearch)
 
-**Instalação com um clique** — eliminar processos manuais (extrair ZIP, copiar arquivos, localizar pastas, configurar dependências). O usuário encontra o mod, clica em Instalar e o launcher cuida do resto.
+```bash
+pnpm dev:infra
+```
 
-## Design
+### 3. Database
 
-Inspirado em Steam, Discord e GitHub: tema dark, responsivo, alto desempenho e navegação intuitiva.
+```bash
+pnpm install
+pnpm approve-builds   # allow native builds (bcrypt, prisma) when prompted
+pnpm db:migrate
+pnpm db:seed
+```
 
-## Documentação
+### 4. Run API + web
 
-Para visão detalhada do projeto, arquitetura, funcionalidades e roadmap, consulte:
+```bash
+pnpm dev:all
+```
 
-- [Visão Geral do Projeto](docs/VISAO_GERAL.md)
+- Web: [http://localhost:3000](http://localhost:3000)
+- API: [http://localhost:4000/v1](http://localhost:4000/v1)
+- API docs: [http://localhost:4000/v1/docs](http://localhost:4000/v1/docs)
+- MinIO console: [http://localhost:9001](http://localhost:9001)
 
-## Roadmap resumido
+Or run services separately:
 
-**Fase 1** — Cadastro, login, upload de mods, páginas de mod e autor, comentários, downloads, pesquisa, categorias e tags.
+```bash
+pnpm dev:infra
+pnpm --filter api dev
+pnpm --filter web dev
+```
 
-**Fase 2** — API pública, seguidores, notificações e estatísticas avançadas.
+## Production
 
-**Fase 3** — Launcher desktop com instalação automática, atualizações e gerenciamento de dependências.
+```bash
+pnpm build
+pnpm --filter api start
+pnpm --filter web start
+```
 
-## Licença
+## Project structure
 
-A definir.
+```text
+apps/web/           # Next.js website
+apps/api/           # NestJS API + Prisma
+packages/types/     # Shared TypeScript types
+packages/sdk/       # REST client
+docker-compose.yml  # Local infra
+docs/               # Architecture & roadmap
+```
+
+## Documentation
+
+- [Technology stack](docs/TECNOLOGIAS.md)
+- [Project vision](docs/VISAO_GERAL.md)
+
+## License
+
+TBD.

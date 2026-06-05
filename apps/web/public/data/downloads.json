@@ -1,0 +1,31 @@
+{
+  "version": "0.1.0",
+  "released_at": null,
+  "note": "Edit this file and place installers in public/installers/ or point url to your CDN.",
+  "assets": [
+    {
+      "id": "windows",
+      "os": "Windows",
+      "title": "Installer (64-bit)",
+      "file": null,
+      "url": null,
+      "size": null
+    },
+    {
+      "id": "linux-appimage",
+      "os": "Linux",
+      "title": "AppImage",
+      "file": null,
+      "url": null,
+      "size": null
+    },
+    {
+      "id": "linux-deb",
+      "os": "Linux",
+      "title": "Debian package (.deb)",
+      "file": null,
+      "url": null,
+      "size": null
+    }
+  ]
+}
