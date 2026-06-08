@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Category, Game } from "@lambda-forge/types";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { sdk } from "@/lib/api";
 
 interface UploadFormProps {
@@ -11,7 +11,7 @@ interface UploadFormProps {
 }
 
 export function UploadForm({ games, categories }: UploadFormProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -77,7 +77,7 @@ export function UploadForm({ games, categories }: UploadFormProps) {
       });
 
       const published = await sdk.publishMod(modId);
-      router.push(`/mods/${published.slug}`);
+      navigate(`/mods/${published.slug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

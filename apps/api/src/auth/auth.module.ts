@@ -1,17 +1,16 @@
-import { Module } from "@nestjs/common";
-import { JwtModule } from "@nestjs/jwt";
+import { Module, ExecutionContext, Injectable } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
 import { APP_GUARD } from "@nestjs/core";
+import { Reflector } from "@nestjs/core";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
-import { JwtStrategy } from "./jwt.strategy";
+import { SupabaseJwtStrategy } from "./supabase-jwt.strategy";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
-import { Reflector } from "@nestjs/core";
 import { IS_PUBLIC_KEY } from "../common/decorators/public.decorator";
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { SupabaseModule } from "../supabase/supabase.module";
 
 @Injectable()
-class GlobalJwtAuthGuard extends JwtAuthGuard {
+class GlobalSupabaseAuthGuard extends JwtAuthGuard {
   constructor(private reflector: Reflector) {
     super();
   }
@@ -27,13 +26,13 @@ class GlobalJwtAuthGuard extends JwtAuthGuard {
 }
 
 @Module({
-  imports: [PassportModule, JwtModule.register({})],
+  imports: [PassportModule, SupabaseModule],
   controllers: [AuthController],
   providers: [
     AuthService,
-    JwtStrategy,
-    { provide: APP_GUARD, useClass: GlobalJwtAuthGuard },
+    SupabaseJwtStrategy,
+    { provide: APP_GUARD, useClass: GlobalSupabaseAuthGuard },
   ],
-  exports: [AuthService, JwtModule],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,19 +1,21 @@
+import { CAPY_LAUNCHER_NAME } from "@/lib/config";
+
 export function LauncherMockup() {
   return (
     <div className="launcher-mockup relative mx-auto w-full max-w-2xl">
       <div className="absolute -inset-4 rounded-2xl bg-accent/10 blur-3xl" aria-hidden />
-      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-[#0b1220] shadow-[0_24px_80px_rgba(0,0,0,0.55),0_0_0_1px_rgba(56,189,248,0.08)]">
+      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-[#111113] shadow-[0_24px_80px_rgba(0,0,0,0.55),0_0_0_1px_rgba(232,93,4,0.08)]">
         {/* Title bar */}
-        <div className="flex items-center gap-2 border-b border-border/60 bg-[#111827]/90 px-4 py-2.5">
+        <div className="flex items-center gap-2 border-b border-border/60 bg-[#111113]/90 px-4 py-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#fbbf24]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#4ade80]" />
-          <span className="ml-3 text-xs font-medium text-muted">Lambda Forge</span>
+          <span className="ml-3 text-xs font-medium text-muted">{CAPY_LAUNCHER_NAME}</span>
         </div>
 
         <div className="flex min-h-[320px] text-left text-[11px] sm:min-h-[360px] sm:text-xs">
           {/* Sidebar */}
-          <aside className="hidden w-36 shrink-0 border-r border-border/60 bg-[#0f172a]/80 p-3 sm:block">
+          <aside className="hidden w-36 shrink-0 border-r border-border/60 bg-[#0a0a0b]/80 p-3 sm:block">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
               Games
             </p>
@@ -69,7 +71,7 @@ export function LauncherMockup() {
             </div>
 
             {/* Download queue */}
-            <div className="border-t border-border/60 bg-[#0f172a]/60 p-3">
+            <div className="border-t border-border/60 bg-[#0a0a0b]/60 p-3">
               <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted">
                 Download queue
               </p>

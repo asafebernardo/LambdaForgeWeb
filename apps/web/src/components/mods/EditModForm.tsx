@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useNavigate } from "react-router-dom";
 import { sdk } from "@/lib/api";
 import type { ModDetail } from "@lambda-forge/types";
 
 export function EditModForm() {
   const { slug } = useParams<{ slug: string }>();
-  const router = useRouter();
+  const navigate = useNavigate();
   const [mod, setMod] = useState<ModDetail | null>(null);
   const [description, setDescription] = useState("");
   const [version, setVersion] = useState("1.0.1");
@@ -16,6 +16,7 @@ export function EditModForm() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!slug) return;
     sdk
       .getMod(slug)
       .then((m) => {
@@ -31,7 +32,6 @@ export function EditModForm() {
     setError("");
     try {
       await sdk.updateMod(mod.id, { description });
-      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Update failed");
     } finally {
@@ -62,7 +62,7 @@ export function EditModForm() {
         sizeBytes: file.size,
         mimeType: file.type || "application/zip",
       });
-      router.push(`/mods/${mod.slug}`);
+      navigate(`/mods/${mod.slug}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

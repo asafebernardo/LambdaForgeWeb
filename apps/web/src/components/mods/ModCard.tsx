@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import type { ModSummary } from "@lambda-forge/types";
 import { RatingStars } from "./RatingStars";
 import { AuthorBadge } from "./AuthorBadge";
@@ -10,7 +10,7 @@ interface ModCardProps {
 export function ModCard({ mod }: ModCardProps) {
   return (
     <Link
-      href={`/mods/${mod.slug}`}
+      to={`/mods/${mod.slug}`}
       className="group flex flex-col rounded-lg border border-border bg-card/60 p-4 no-underline transition hover:border-accent/40 hover:bg-card"
     >
       <h3 className="line-clamp-2 text-base font-semibold text-text group-hover:text-accent">

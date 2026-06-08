@@ -1,6 +1,8 @@
 import type { SupportedGame } from "@lambda-forge/types";
 
-export const SITE_NAME = "Lambda Forge";
+export const SITE_NAME = "CapyMods";
+
+export const CAPY_LAUNCHER_NAME = "CapyLauncher";
 
 export const LOGO_SRC = "/assets/logo.png";
 
@@ -8,6 +10,11 @@ export const LAUNCHER_TAGLINE =
   "Launcher and mod manager for classic and indie games.";
 
 export const SUPPORTED_GAMES: SupportedGame[] = [
+  { name: "Left 4 Dead 2", slug: "left-4-dead-2", steamAppId: 550 },
+  { name: "Garry's Mod", slug: "garrys-mod", steamAppId: 4000 },
+  { name: "Team Fortress 2", slug: "team-fortress-2", steamAppId: 440 },
+  { name: "Portal", slug: "portal", steamAppId: 400 },
+  { name: "Portal 2", slug: "portal-2", steamAppId: 620 },
   {
     name: "Vintage Story",
     slug: "vintage-story",

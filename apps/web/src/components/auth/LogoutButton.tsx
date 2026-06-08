@@ -1,19 +1,21 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { sdk } from "@/lib/api";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 
 export function LogoutButton() {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
 
   async function logout() {
     try {
-      await sdk.logout();
+      await signOut();
     } catch {
-      // cookie cleared server-side even on error
+      // session cleared client-side even on error
     }
-    router.push("/");
-    router.refresh();
+    refreshAuth();
+    navigate("/");
   }
 
   return (

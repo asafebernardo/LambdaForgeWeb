@@ -153,6 +153,63 @@ export interface ListModsParams {
   limit?: number;
 }
 
+export interface CatalogModDownload {
+  downloadUrl: string | null;
+  mirrors: string[];
+  fileSize: number | null;
+  checksum: string | null;
+}
+
+export interface CatalogMod {
+  id: string;
+  externalId: string;
+  source: string;
+  name: string;
+  slug: string;
+  description: string;
+  shortDescription: string | null;
+  version: string | null;
+  author: string;
+  game: Game | null;
+  category: string | null;
+  tags: string[];
+  views: number;
+  downloads: number;
+  likes: number;
+  thumbnailUrl: string | null;
+  images: string[];
+  externalUrl: string | null;
+  download: CatalogModDownload;
+  priorityScore: number;
+  updatedAt: string;
+  createdAt: string;
+  lastSyncAt: string | null;
+}
+
+export interface CatalogSyncStatus {
+  enabledSources: number;
+  indexedModCount: number;
+  queuePending: number;
+  queueFailed: number;
+  searchAvailable: boolean;
+  lastSync: {
+    jobType: string;
+    status: string;
+    at: string;
+    rateLimitHit: boolean;
+  } | null;
+}
+
+export interface ListCatalogParams {
+  game?: string;
+  category?: string;
+  tags?: string[];
+  q?: string;
+  sort?: "recent" | "popular" | "trending" | "likes";
+  page?: number;
+  limit?: number;
+}
+
 export interface DownloadAsset {
   id: string;
   os: string;

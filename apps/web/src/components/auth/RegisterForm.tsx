@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Link, useNavigate } from "react-router-dom";
 import { sdk } from "@/lib/api";
+import { signUp } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 
 export function RegisterForm() {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,9 +20,16 @@ export function RegisterForm() {
     setError("");
     setLoading(true);
     try {
-      await sdk.register(email, username, password);
-      router.push("/mods");
-      router.refresh();
+      const { session } = await signUp(email, password, username);
+      if (session) {
+        await sdk.syncProfile(username);
+      }
+      refreshAuth();
+      if (!session) {
+        setError("Check your email to confirm your account, then log in.");
+        return;
+      }
+      navigate("/mods");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -47,6 +56,8 @@ export function RegisterForm() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="mt-1 w-full rounded-md border border-border bg-bg px-3 py-2"
+          pattern="^[a-zA-Z0-9_-]+$"
+          title="Letters, numbers, _ and - only"
           required
         />
       </label>
@@ -65,13 +76,13 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-accent py-2 text-sm font-semibold text-accent-foreground disabled:opacity-50"
+        className="btn-primary w-full rounded-md py-2 text-sm font-semibold text-accent-foreground disabled:opacity-50"
       >
         {loading ? "Creating…" : "Sign up"}
       </button>
       <p className="text-center text-sm text-muted">
         Already have an account?{" "}
-        <Link href="/login" className="text-accent">
+        <Link to="/login" className="text-accent">
           Log in
         </Link>
       </p>

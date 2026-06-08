@@ -10,6 +10,8 @@ import { ModsModule } from "./mods/mods.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { SearchModule } from "./search/search.module";
 import { StorageModule } from "./storage/storage.module";
+import { CatalogModule } from "./catalog/catalog.module";
+import { SupabaseModule } from "./supabase/supabase.module";
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { StorageModule } from "./storage/storage.module";
       { name: "upload", ttl: 60000, limit: 20 },
     ]),
     PrismaModule,
+    SupabaseModule,
     StorageModule,
     AuthModule,
     UsersModule,
@@ -30,6 +33,7 @@ import { StorageModule } from "./storage/storage.module";
     ModsModule,
     UploadsModule,
     SearchModule,
+    CatalogModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

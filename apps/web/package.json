@@ -2,32 +2,30 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack --port 3000",
-    "dev:webpack": "next dev",
-    "start:prod": "next build && next start",
-    "clean": "rm -rf .next",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "dev": "vite --port 3000",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 3000",
+    "clean": "rm -rf dist",
+    "lint": "eslint src",
+    "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
     "@lambda-forge/sdk": "workspace:*",
     "@lambda-forge/types": "workspace:*",
+    "@supabase/supabase-js": "^2.49.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.4"
+    "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
+    "@tailwindcss/vite": "^4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.4",
-    "@eslint/eslintrc": "^3"
+    "typescript": "^5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "vite": "^6.3.5"
   }
 }

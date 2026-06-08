@@ -1,16 +1,30 @@
 import { createSdk } from "@lambda-forge/sdk";
+import { getAccessToken } from "./supabase";
 import { SUPPORTED_GAMES } from "./config";
 import type { Category, Game, SupportedGame } from "@lambda-forge/types";
 
-export const sdk = createSdk(
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000",
-);
+export const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
 
-export async function fetchGames(): Promise<(Game | SupportedGame)[]> {
+export const sdk = createSdk({
+  baseUrl: API_URL,
+  credentials: "omit",
+  getToken: getAccessToken,
+});
+
+export function normalizeGame(game: Game | SupportedGame): Game {
+  if ("id" in game && game.id) return game as Game;
+  return { ...game, id: game.slug };
+}
+
+export function normalizeGames(games: (Game | SupportedGame)[]): Game[] {
+  return games.map(normalizeGame);
+}
+
+export async function fetchGames(): Promise<Game[]> {
   try {
-    return await sdk.getGames();
+    return normalizeGames(await sdk.getGames());
   } catch {
-    return SUPPORTED_GAMES;
+    return normalizeGames(SUPPORTED_GAMES);
   }
 }
 
@@ -25,10 +39,7 @@ export async function fetchGame(slug: string): Promise<Game | null> {
 
 export async function fetchCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}/v1/games/categories/list`,
-      { next: { revalidate: 300 } },
-    );
+    const res = await fetch(`${API_URL}/v1/games/categories/list`);
     if (!res.ok) return [];
     return res.json();
   } catch {

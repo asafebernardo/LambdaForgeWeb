@@ -1,16 +1,6 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
-import { Throttle } from "@nestjs/throttler";
-import { Request, Response } from "express";
+import { Body, Controller, Post, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { RegisterDto, LoginDto } from "./dto/auth.dto";
-import { Public } from "../common/decorators/public.decorator";
+import { SyncProfileDto } from "./dto/auth.dto";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { CurrentUser, AuthUser } from "../common/decorators/current-user.decorator";
 
@@ -18,35 +8,16 @@ import { CurrentUser, AuthUser } from "../common/decorators/current-user.decorat
 export class AuthController {
   constructor(private auth: AuthService) {}
 
-  @Public()
-  @Throttle({ auth: { limit: 10, ttl: 60000 } })
-  @Post("register")
-  register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
-    return this.auth.register(dto, res);
-  }
-
-  @Public()
-  @Throttle({ auth: { limit: 10, ttl: 60000 } })
-  @Post("login")
-  login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    return this.auth.login(dto, res);
-  }
-
-  @Public()
-  @Post("refresh")
-  refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    return this.auth.refresh(req.cookies?.refresh_token, res);
-  }
-
+  /** Sync local profile after Supabase sign-up (username) or first login. */
   @UseGuards(JwtAuthGuard)
-  @Post("logout")
-  logout(@Res({ passthrough: true }) res: Response) {
-    return this.auth.logout(res);
+  @Post("sync")
+  sync(@CurrentUser() user: AuthUser, @Body() dto: SyncProfileDto) {
+    return this.auth.syncProfile(user, dto);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post("me")
   me(@CurrentUser() user: AuthUser) {
-    return { user };
+    return this.auth.me(user);
   }
 }

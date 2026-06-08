@@ -13,7 +13,8 @@ export function DownloadCards({ assets }: DownloadCardsProps) {
         return (
           <article
             key={asset.id}
-            className="flex flex-col rounded-xl border border-border bg-card p-5"
+            id={asset.id}
+            className="flex flex-col rounded-xl border border-border bg-card p-5 scroll-mt-24"
           >
             <span className="text-xs font-bold uppercase tracking-wider text-accent">
               {asset.os}
@@ -29,7 +30,7 @@ export function DownloadCards({ assets }: DownloadCardsProps) {
               <a
                 href={asset.url!}
                 download
-                className="mt-auto block rounded-[10px] bg-gradient-to-br from-accent to-accent-dim py-2.5 text-center text-sm font-semibold text-accent-foreground no-underline transition hover:opacity-95"
+                className="btn-primary mt-auto block rounded-[10px] py-2.5 text-center text-sm font-semibold no-underline transition hover:opacity-95"
               >
                 Download
               </a>

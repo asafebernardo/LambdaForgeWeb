@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { Game } from "@lambda-forge/types";
 
 interface ModFiltersProps {
@@ -8,15 +8,15 @@ interface ModFiltersProps {
 }
 
 export function ModFilters({ games }: ModFiltersProps) {
-  const router = useRouter();
-  const params = useSearchParams();
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
 
   function update(key: string, value: string) {
     const next = new URLSearchParams(params.toString());
     if (value) next.set(key, value);
     else next.delete(key);
     next.delete("page");
-    router.push(`/mods?${next.toString()}`);
+    navigate(`/mods?${next.toString()}`);
   }
 
   return (

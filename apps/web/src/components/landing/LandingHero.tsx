@@ -1,7 +1,6 @@
-import { Logo } from "@/components/Logo";
+import { CAPY_LAUNCHER_NAME } from "@/lib/config";
 import { DownloadCTA } from "./DownloadCTA";
 import { LauncherMockup } from "./LauncherMockup";
-import { LAUNCHER_TAGLINE, SITE_NAME } from "@/lib/config";
 
 export function LandingHero() {
   return (
@@ -10,21 +9,21 @@ export function LandingHero() {
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-12 xl:max-w-7xl">
         <div className="text-center lg:text-left">
-          <Logo
-            size={96}
-            className="mx-auto drop-shadow-[0_8px_24px_rgba(56,189,248,0.25)] lg:mx-0"
-          />
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl xl:text-[3.25rem]">
-            {SITE_NAME}
+          <p className="font-display text-sm font-medium uppercase tracking-wider text-accent">
+            Desktop launcher
+          </p>
+          <h1 className="font-display mt-2 text-4xl font-semibold tracking-tight sm:text-5xl xl:text-[3.25rem]">
+            {CAPY_LAUNCHER_NAME}
           </h1>
           <p className="mt-3 max-w-xl text-lg text-muted lg:mx-0 mx-auto">
-            {LAUNCHER_TAGLINE}
+            One-click mod installs, profiles, conflict detection, and download
+            queues — built for indie and sandbox games.
           </p>
           <p className="mt-2 max-w-lg text-sm text-muted/90 lg:mx-0 mx-auto">
-            Install mods with one click, manage profiles, detect conflicts, and
-            stay up to date — no ZIP extraction or manual folder copying.
+            No ZIP extraction or manual folder copying. Manage your entire mod
+            library from a single polished desktop app.
           </p>
-          <div className="mt-7 flex justify-center lg:justify-start">
+          <div className="mt-7 flex flex-wrap justify-center gap-3 lg:justify-start">
             <DownloadCTA size="hero" />
           </div>
         </div>

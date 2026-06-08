@@ -76,7 +76,7 @@ function MockScreen({ id }: { id: string }) {
   };
 
   return (
-    <div className="min-h-[200px] bg-[#0b1220]">{screens[id] ?? screens.library}</div>
+    <div className="min-h-[200px] bg-[#111113]">{screens[id] ?? screens.library}</div>
   );
 }
 
@@ -89,7 +89,7 @@ export function ScreenshotGallery() {
       <div className="mx-auto max-w-6xl px-4">
         <ScrollReveal>
           <div className="text-center">
-            <h2 className="text-2xl font-semibold sm:text-3xl">See it in action</h2>
+            <h2 className="font-display text-2xl font-semibold sm:text-3xl">See it in action</h2>
             <p className="mx-auto mt-2 max-w-xl text-sm text-muted">
               A launcher built for modding workflows — library, browser, queue, and profiles in one place.
             </p>
@@ -117,7 +117,7 @@ export function ScreenshotGallery() {
 
             <div className="relative">
               <div className="absolute -inset-3 rounded-2xl bg-accent/5 blur-2xl" aria-hidden />
-              <div className="relative overflow-hidden rounded-xl border border-border/80 bg-[#111827] shadow-2xl">
+              <div className="relative overflow-hidden rounded-xl border border-border/80 bg-[#111113] shadow-2xl">
                 <div className="flex items-center gap-2 border-b border-border/60 px-4 py-2">
                   <span className="h-2 w-2 rounded-full bg-[#f87171]" />
                   <span className="h-2 w-2 rounded-full bg-[#fbbf24]" />

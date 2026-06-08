@@ -1,6 +1,5 @@
 import type { SupportedGame } from "@lambda-forge/types";
-import Image from "next/image";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { gameCoverUrl } from "@/lib/config";
 import { ScrollReveal } from "@/components/landing/ScrollReveal";
 
@@ -16,15 +15,12 @@ export function SupportedGames({ games, linkToGamePage = false }: SupportedGames
         {games.map((game, i) => {
           const card = (
             <ScrollReveal delay={Math.min(i * 30, 300)}>
-              <article className="group relative aspect-[2/3] overflow-hidden rounded-md bg-[#0d0d10] shadow-[0_2px_8px_rgba(0,0,0,0.4)] ring-1 ring-white/5 transition duration-300 hover:z-10 hover:scale-[1.04] hover:shadow-[0_12px_36px_rgba(56,189,248,0.2)] hover:ring-accent/30">
-                <Image
+              <article className="group relative aspect-[2/3] overflow-hidden rounded-md bg-[#0d0d0f] shadow-[0_2px_8px_rgba(0,0,0,0.4)] ring-1 ring-white/5 transition duration-300 hover:z-10 hover:scale-[1.04] hover:shadow-[0_12px_36px_rgba(232,93,4,0.2)] hover:ring-accent/30">
+                <img
                   src={gameCoverUrl(game)}
                   alt={game.name}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-110"
-                  sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 165px"
                   loading="lazy"
-                  unoptimized={!game.steamAppId}
+                  className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105 group-hover:brightness-110"
                 />
 
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/55 to-transparent px-2.5 pb-2.5 pt-12">
@@ -42,7 +38,7 @@ export function SupportedGames({ games, linkToGamePage = false }: SupportedGames
             return (
               <Link
                 key={game.slug}
-                href={`/games/${game.slug}`}
+                to={`/mods/games/${game.slug}`}
                 className="block no-underline hover:no-underline"
               >
                 {card}

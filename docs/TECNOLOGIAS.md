@@ -27,7 +27,7 @@ Launcher ┘                              │
 | Camada | Tecnologia | Status |
 |--------|------------|--------|
 | Monorepo | Turborepo + pnpm + TypeScript | Implementado |
-| Website | Next.js + Tailwind CSS | Implementado |
+| Website | Vite + React 19 + React Router + Tailwind CSS | Implementado |
 | Tipos compartilhados | `packages/types` | Implementado |
 | SDK web | `packages/sdk` | Implementado |
 | API central | NestJS + OpenAPI (REST `/v1`) | Implementado (Fase 1) |
@@ -44,12 +44,12 @@ Launcher ┘                              │
 
 ## Website (implementado)
 
-### Next.js (App Router)
+### Vite + React (SPA)
 
-- Rotas: landing (`/`), download (`/download`), catálogo de mods (`/mods`), jogos (`/games/[slug]`), detalhe do mod, upload, login, perfis de autor
-- Server Components com ISR (`revalidate: 60`) para listagens
-- Middleware para rotas protegidas (`/mods/upload`, edit)
-- Integração via `@lambda-forge/sdk` — nunca acessa PostgreSQL diretamente
+- Rotas via **React Router** (`/`, `/download`, `/mods`, etc.)
+- Client-side data fetching via `@lambda-forge/sdk`
+- Rotas protegidas com `ProtectedRoute` (cookie JWT)
+- Build estático em `dist/` — deploy em CDN ou nginx
 
 ### Tailwind CSS
 
@@ -77,7 +77,7 @@ Módulos:
 
 - `auth` — register, login, refresh, logout (JWT em cookie httpOnly)
 - `users` — perfil (`/me`) e perfil público por username
-- `games` — lista dos 11 jogos suportados (seed)
+- `games` — lista dos 16 jogos suportados (seed)
 - `mods` — CRUD, versões, publish, download, listagem com filtros
 - `uploads` — presigned URLs (MinIO/S3)
 - `ratings` / `comments` — nested em `/mods/:id/...`
@@ -150,7 +150,7 @@ Consome o mesmo SDK/API REST. Responsável por instalação local, backup, perfi
 
 | Fase | Entregas | Stack em uso |
 |------|----------|--------------|
-| **1** | Cadastro, mods, perfil, comentários, busca | Next.js + NestJS + PostgreSQL + R2 + Meilisearch |
+| **1** | Cadastro, mods, perfil, comentários, busca | Vite + React + NestJS + PostgreSQL + R2 + Meilisearch |
 | **2** | API pública, seguidores, notificações, stats | + Redis + BullMQ + OpenAPI v1 |
 | **3** | Launcher, instalação 1-clique | + Tauri + URLs assinadas + SDK |
 | **4** | Escala global, alto tráfego | + CDN agressivo + read replicas + workers + K8s |
@@ -174,7 +174,7 @@ Consome o mesmo SDK/API REST. Responsável por instalação local, backup, perfi
 ```text
 LambdaForgeWeb/
 ├── apps/
-│   └── web/                 # Next.js (website)
+│   └── web/                 # Vite + React (website SPA)
 ├── packages/
 │   └── types/               # Tipos TypeScript compartilhados
 ├── docs/

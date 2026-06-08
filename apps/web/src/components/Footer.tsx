@@ -1,5 +1,6 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import {
+  CAPY_LAUNCHER_NAME,
   DISCORD_URL,
   DOCS_URL,
   GITHUB_URL,
@@ -16,8 +17,10 @@ export function Footer() {
     {
       title: "Product",
       links: [
+        { label: CAPY_LAUNCHER_NAME, href: "/launcher" },
+        { label: "Mods", href: "/mods" },
         { label: "Download", href: "/download" },
-        { label: "Supported games", href: "/#games" },
+        { label: "Supported games", href: "/launcher#games" },
         { label: "Roadmap", href: ROADMAP_URL, external: true },
       ],
     },
@@ -39,7 +42,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="mt-auto border-t border-border/80 bg-[#0b1220]/60">
+    <footer className="mt-auto border-t border-border/80 bg-[#0a0a0b]/80">
       <div className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
@@ -69,7 +72,7 @@ export function Footer() {
                       </a>
                     ) : (
                       <Link
-                        href={link.href}
+                        to={link.href}
                         className="text-sm text-muted no-underline transition hover:text-accent"
                       >
                         {link.label}

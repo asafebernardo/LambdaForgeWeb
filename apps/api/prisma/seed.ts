@@ -3,6 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const GAMES = [
+  { name: "Left 4 Dead 2", slug: "left-4-dead-2", steamAppId: 550 },
+  { name: "Garry's Mod", slug: "garrys-mod", steamAppId: 4000 },
+  { name: "Team Fortress 2", slug: "team-fortress-2", steamAppId: 440 },
+  { name: "Portal", slug: "portal", steamAppId: 400 },
+  { name: "Portal 2", slug: "portal-2", steamAppId: 620 },
   {
     name: "Vintage Story",
     slug: "vintage-story",

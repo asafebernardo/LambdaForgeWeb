@@ -1,4 +1,4 @@
-import { WHY_LAMBDA_FORGE } from "@/lib/config";
+import { SITE_NAME, WHY_LAMBDA_FORGE } from "@/lib/config";
 import { ScrollReveal } from "./ScrollReveal";
 import { FeatureIcon } from "./FeatureIcon";
 
@@ -8,9 +8,9 @@ export function WhyLambdaForge() {
       <div className="mx-auto max-w-6xl px-4">
         <ScrollReveal>
           <div className="text-center">
-            <h2 className="text-2xl font-semibold sm:text-3xl">Why Lambda Forge?</h2>
+            <h2 className="font-display text-2xl font-semibold sm:text-3xl">Why {SITE_NAME}?</h2>
             <p className="mx-auto mt-2 max-w-2xl text-sm text-muted">
-              Manual modding works — until it doesn&apos;t. Lambda Forge replaces
+              Manual modding works — until it doesn&apos;t. {SITE_NAME} replaces
               scattered ZIP files with a focused, repeatable workflow.
             </p>
           </div>
@@ -19,7 +19,7 @@ export function WhyLambdaForge() {
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {WHY_LAMBDA_FORGE.map((item, i) => (
             <ScrollReveal key={item.title} delay={i * 60}>
-              <article className="glass-card group h-full rounded-xl p-5 transition duration-300 hover:border-accent/35 hover:shadow-[0_8px_32px_rgba(56,189,248,0.08)]">
+              <article className="glass-card group h-full rounded-xl p-5 transition duration-300 hover:border-accent/35 hover:shadow-[0_8px_32px_rgba(232,93,4,0.08)]">
                 <div className="mb-3 inline-flex rounded-lg bg-accent/10 p-2.5 text-accent transition group-hover:bg-accent/15">
                   <FeatureIcon name={item.icon} />
                 </div>
@@ -35,7 +35,7 @@ export function WhyLambdaForge() {
         <ScrollReveal delay={200}>
           <div className="mt-10 overflow-hidden rounded-xl border border-border/60">
             <div className="grid sm:grid-cols-2">
-              <div className="border-b border-border/60 bg-[#0b1220] p-5 sm:border-b-0 sm:border-r">
+              <div className="border-b border-border/60 bg-[#111113] p-5 sm:border-b-0 sm:border-r">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted">
                   Manual install
                 </p>
@@ -48,7 +48,7 @@ export function WhyLambdaForge() {
               </div>
               <div className="bg-accent/5 p-5">
                 <p className="text-xs font-semibold uppercase tracking-wider text-accent">
-                  Lambda Forge
+                  {SITE_NAME}
                 </p>
                 <ul className="mt-3 space-y-2 text-sm text-text">
                   <li>• One launcher, multiple games</li>

@@ -7,9 +7,10 @@ Mod platform and launcher website for indie and sandbox games.
 | Technology | Use |
 |------------|-----|
 | **Turborepo + pnpm** | Monorepo |
-| **Next.js 15** | Website (`apps/web`) |
+| **Vite + React 19** | Website SPA (`apps/web`) |
 | **NestJS** | REST API (`apps/api`, `/v1`) |
-| **PostgreSQL + Prisma** | Database |
+| **PostgreSQL + Prisma** | Database (Supabase Postgres in production) |
+| **Supabase Auth** | Accounts (web client + JWT on API) |
 | **Redis** | Rate limiting / cache |
 | **MinIO** | Object storage (dev S3) |
 | **Meilisearch** | Mod search |
@@ -39,6 +40,8 @@ Full stack reference: [docs/TECNOLOGIAS.md](docs/TECNOLOGIAS.md)
 cp .env.example .env
 ```
 
+Configure Supabase keys — see [docs/SUPABASE.md](docs/SUPABASE.md).
+
 ### 2. Infrastructure (PostgreSQL, Redis, MinIO, Meilisearch)
 
 ```bash
@@ -49,7 +52,6 @@ pnpm dev:infra
 
 ```bash
 pnpm install
-pnpm approve-builds   # allow native builds (bcrypt, prisma) when prompted
 pnpm db:migrate
 pnpm db:seed
 ```
@@ -60,7 +62,7 @@ pnpm db:seed
 pnpm dev:all
 ```
 
-- Web: [http://localhost:3000](http://localhost:3000)
+- Web: [http://localhost:3000](http://localhost:3000) (Vite dev server)
 - API: [http://localhost:4000/v1](http://localhost:4000/v1)
 - API docs: [http://localhost:4000/v1/docs](http://localhost:4000/v1/docs)
 - MinIO console: [http://localhost:9001](http://localhost:9001)

@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum UserRole {
@@ -25,9 +26,10 @@ enum MediaType {
 
 model User {
   id           String    @id @default(cuid())
+  supabaseId   String?   @unique
   email        String    @unique
   username     String    @unique
-  passwordHash String
+  passwordHash String?
   role         UserRole  @default(USER)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
@@ -60,8 +62,10 @@ model Game {
   coverUrl    String?
   createdAt   DateTime @default(now())
 
-  mods       Mod[]
-  categories Category[]
+  mods         Mod[]
+  categories   Category[]
+  indexedMods  IndexedMod[]
+  syncSources  SyncSource[]
 }
 
 model Category {
@@ -210,4 +214,201 @@ model DownloadEvent {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([modId])
+}
+
+// ─── External mod index (synced from GameBanana, Workshop, etc.) ─────────────
+
+enum SyncSourceType {
+  GAMEBANANA
+  STEAM_WORKSHOP
+  TF2MAPS
+  CUSTOM
+}
+
+enum SyncJobType {
+  METADATA_SYNC
+  IMAGE_SYNC
+  POPULARITY_UPDATE
+  STALE_REFRESH
+  FULL_GAME_SYNC
+  CATEGORY_ROTATION
+}
+
+enum SyncJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+model SyncSource {
+  id               String         @id @default(cuid())
+  type             SyncSourceType
+  name             String
+  baseUrl          String?
+  gameId           String?
+  externalGameId   String?
+  enabled          Boolean        @default(true)
+  config           Json?
+  lastFullSyncAt   DateTime?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  game        Game?           @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  indexedMods IndexedMod[]
+  syncLogs    SyncLog[]
+  queueItems  SyncQueueItem[]
+
+  @@unique([type, externalGameId])
+  @@index([enabled])
+}
+
+model IndexedAuthor {
+  id          String         @id @default(cuid())
+  externalId  String?
+  source      SyncSourceType
+  name        String
+  slug        String?
+  profileUrl  String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  mods IndexedMod[]
+
+  @@unique([source, externalId])
+  @@index([name])
+}
+
+model IndexedMod {
+  id                 String         @id @default(cuid())
+  externalId         String
+  source             SyncSourceType
+  syncSourceId       String?
+  name               String
+  slug               String         @unique
+  description        String?        @db.Text
+  shortDescription   String?
+  version            String?
+  authorId           String?
+  authorName         String?
+  gameId             String?
+  categoryExternalId String?
+  categoryName       String?
+  views              Int            @default(0)
+  downloads          Int            @default(0)
+  likes              Int            @default(0)
+  downloadsRecent    Int            @default(0)
+  viewsRecent        Int            @default(0)
+  thumbnailUrl       String?
+  thumbnailCachedKey String?
+  externalUrl        String?
+  downloadUrl        String?
+  mirrorUrls         String[]       @default([])
+  fileSizeBytes      BigInt?
+  checksum           String?
+  etag               String?
+  contentHash        String?
+  syncPriority       Int            @default(50)
+  priorityScore      Float          @default(0)
+  failedSyncAttempts Int            @default(0)
+  externalUpdatedAt  DateTime?
+  lastSyncAt         DateTime?
+  lastSuccessfulSync DateTime?
+  nextSyncAt         DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  syncSource SyncSource?         @relation(fields: [syncSourceId], references: [id], onDelete: SetNull)
+  author     IndexedAuthor?      @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  game       Game?               @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  images     IndexedModImage[]
+  versions   IndexedModVersion[]
+  tags       IndexedModTag[]
+
+  @@unique([source, externalId])
+  @@index([gameId])
+  @@index([syncPriority])
+  @@index([priorityScore])
+  @@index([nextSyncAt])
+  @@index([lastSuccessfulSync])
+  @@index([downloads])
+  @@index([updatedAt])
+}
+
+model IndexedModImage {
+  id        String  @id @default(cuid())
+  modId     String
+  url       String
+  cachedKey String?
+  sortOrder Int     @default(0)
+
+  mod IndexedMod @relation(fields: [modId], references: [id], onDelete: Cascade)
+
+  @@index([modId])
+}
+
+model IndexedModVersion {
+  id                String    @id @default(cuid())
+  modId             String
+  version           String
+  downloadUrl       String?
+  fileSizeBytes     BigInt?
+  checksum          String?
+  changelog         String?   @db.Text
+  externalUpdatedAt DateTime?
+  createdAt         DateTime  @default(now())
+
+  mod IndexedMod @relation(fields: [modId], references: [id], onDelete: Cascade)
+
+  @@unique([modId, version])
+}
+
+model IndexedModTag {
+  modId String
+  tag   String
+
+  mod IndexedMod @relation(fields: [modId], references: [id], onDelete: Cascade)
+
+  @@id([modId, tag])
+  @@index([tag])
+}
+
+model SyncLog {
+  id           String         @id @default(cuid())
+  syncSourceId String?
+  jobType      SyncJobType
+  status       SyncJobStatus
+  message      String?
+  metadata     Json?
+  durationMs   Int?
+  rateLimitHit Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+
+  syncSource SyncSource? @relation(fields: [syncSourceId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([jobType, status])
+}
+
+model SyncQueueItem {
+  id           String         @id @default(cuid())
+  bullJobId    String?        @unique
+  jobType      SyncJobType
+  status       SyncJobStatus  @default(PENDING)
+  priority     Int            @default(0)
+  payload      Json
+  attempts     Int            @default(0)
+  maxAttempts  Int            @default(5)
+  lastError    String?
+  scheduledFor DateTime       @default(now())
+  startedAt    DateTime?
+  completedAt  DateTime?
+  syncSourceId String?
+  indexedModId String?
+
+  syncSource SyncSource? @relation(fields: [syncSourceId], references: [id], onDelete: SetNull)
+
+  @@index([status, scheduledFor])
+  @@index([jobType, status])
 }

@@ -94,6 +94,14 @@ export class LambdaForgeSdk {
     });
   }
 
+  /** Sync local User row after Supabase sign-up or login. */
+  syncProfile(username?: string) {
+    return this.request<AuthResponse>("/auth/sync", {
+      method: "POST",
+      body: JSON.stringify(username ? { username } : {}),
+    });
+  }
+
   logout() {
     return this.request<{ ok: boolean }>("/auth/logout", { method: "POST" });
   }
@@ -216,6 +224,10 @@ export class LambdaForgeSdk {
   }
 }
 
-export function createSdk(baseUrl = "http://localhost:4000") {
-  return new LambdaForgeSdk({ baseUrl });
+export function createSdk(baseUrlOrOptions: string | SdkOptions = "http://localhost:4000") {
+  const options =
+    typeof baseUrlOrOptions === "string"
+      ? { baseUrl: baseUrlOrOptions }
+      : baseUrlOrOptions;
+  return new LambdaForgeSdk(options);
 }
