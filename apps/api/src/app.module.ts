@@ -10,7 +10,6 @@ import { ModsModule } from "./mods/mods.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { SearchModule } from "./search/search.module";
 import { StorageModule } from "./storage/storage.module";
-import { CatalogModule } from "./catalog/catalog.module";
 import { SupabaseModule } from "./supabase/supabase.module";
 
 @Module({
@@ -33,7 +32,6 @@ import { SupabaseModule } from "./supabase/supabase.module";
     ModsModule,
     UploadsModule,
     SearchModule,
-    CatalogModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

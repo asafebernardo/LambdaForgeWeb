@@ -15,7 +15,7 @@ export function LogoutButton() {
       // session cleared client-side even on error
     }
     refreshAuth();
-    navigate("/");
+    navigate("/home");
   }
 
   return (

@@ -38,7 +38,7 @@ export function ModDetailPage() {
         <main className="mx-auto max-w-4xl px-4 py-20 text-center">
           <h1 className="text-2xl font-semibold">Mod not found</h1>
           <Link to="/mods" className="mt-4 inline-block text-accent">
-            Back to catalog
+            Back to mods
           </Link>
         </main>
         <Footer />

@@ -9,6 +9,25 @@ export const LOGO_SRC = "/assets/logo.png";
 export const LAUNCHER_TAGLINE =
   "Launcher and mod manager for classic and indie games.";
 
+export type GameSupportBadge = "Native" | "Workshop" | "Community" | "Experimental";
+
+/** Optional support badges for launcher landing game grid. */
+export const GAME_SUPPORT_BADGES: Partial<Record<string, GameSupportBadge>> = {
+  "vintage-story": "Native",
+  "project-zomboid": "Community",
+  "team-fortress-2": "Workshop",
+  "garrys-mod": "Workshop",
+  "kenshi": "Community",
+  starsector: "Native",
+  openttd: "Native",
+  openrct2: "Native",
+  mindustry: "Community",
+  barotrauma: "Community",
+  unturned: "Workshop",
+  cdda: "Community",
+  "songs-of-syx": "Experimental",
+};
+
 export const SUPPORTED_GAMES: SupportedGame[] = [
   { name: "Left 4 Dead 2", slug: "left-4-dead-2", steamAppId: 550 },
   { name: "Garry's Mod", slug: "garrys-mod", steamAppId: 4000 },

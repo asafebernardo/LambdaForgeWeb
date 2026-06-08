@@ -5,6 +5,7 @@ import type {
   Game,
   ListModsParams,
   ModDetail,
+  ModSummary,
   Paginated,
   PresignResponse,
   PublicUserProfile,
@@ -73,7 +74,7 @@ export class LambdaForgeSdk {
     if (params.limit) qs.set("limit", String(params.limit));
     params.tags?.forEach((t) => qs.append("tags", t));
     const query = qs.toString();
-    return this.request<Paginated<ModDetail>>(`/mods${query ? `?${query}` : ""}`);
+    return this.request<Paginated<ModSummary>>(`/mods${query ? `?${query}` : ""}`);
   }
 
   getMod(slug: string) {

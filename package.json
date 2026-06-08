@@ -12,9 +12,7 @@
     "db:migrate": "pnpm --filter api db:migrate",
     "db:seed": "pnpm --filter api db:seed",
     "db:reset": "pnpm --filter api db:reset",
-    "db:test": "pnpm --filter api db:test",
-    "indexer:dev": "pnpm --filter indexer dev",
-    "indexer:seed": "pnpm --filter indexer seed:sources"
+    "db:test": "pnpm --filter api db:test"
   },
   "devDependencies": {
     "turbo": "^2.5.4",

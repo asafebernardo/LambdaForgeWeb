@@ -2,60 +2,53 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { DownloadCards } from "@/components/DownloadCards";
-import { FeatureGrid } from "@/components/FeatureGrid";
 import { Logo } from "@/components/Logo";
-import { SupportedGames } from "@/components/SupportedGames";
-import {
-  LAUNCHER_FEATURES,
-  LAUNCHER_TAGLINE,
-  SITE_NAME,
-  SUPPORTED_GAMES,
-} from "@/lib/config";
-import { getDownloadsManifest } from "@/lib/downloads";
+import { CAPY_LAUNCHER_NAME, SITE_NAME } from "@/lib/config";
+import { getDownloadsManifest, getInstallableAssets } from "@/lib/downloads";
 
 export function DownloadPage() {
   const manifest = getDownloadsManifest();
+  const installable = getInstallableAssets();
 
   const versionLabel = manifest.version
-    ? `Version ${manifest.version}${
+    ? `v${manifest.version}${
         manifest.released_at
           ? ` · ${new Date(manifest.released_at).toLocaleDateString("en-US")}`
           : ""
       }`
-    : "Configure installers in public/data/downloads.json";
+    : null;
 
   return (
     <>
       <Header active="download" />
-      <main>
-        <section className="mx-auto max-w-6xl px-4 py-12 text-center">
-          <Logo size={112} className="mx-auto drop-shadow-[0_8px_24px_rgba(232,93,4,0.25)]" />
+      <main className="mx-auto max-w-4xl px-4 py-12 sm:py-16">
+        <div className="text-center">
+          <Logo size={96} className="mx-auto drop-shadow-[0_8px_24px_rgba(232,93,4,0.25)]" />
           <h1 className="font-display mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Download {SITE_NAME}
+            Download {CAPY_LAUNCHER_NAME}
           </h1>
-          <p className="mx-auto mt-3 max-w-2xl text-muted">{LAUNCHER_TAGLINE}</p>
-        </section>
+          {versionLabel && (
+            <p className="mt-2 font-mono text-sm text-muted">{versionLabel}</p>
+          )}
+        </div>
 
-        <section className="border-y border-border bg-card/60 py-10">
-          <div className="mx-auto max-w-6xl px-4">
-            <p className="mb-5 text-center font-mono text-sm text-muted">{versionLabel}</p>
-            <DownloadCards assets={manifest.assets} />
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-4 py-10">
-          <FeatureGrid features={[...LAUNCHER_FEATURES]} />
-
-          <div className="mt-10">
-            <h2 className="mb-4 text-center text-lg font-semibold">Supported games</h2>
-            <SupportedGames games={SUPPORTED_GAMES} />
-          </div>
-
-          <p className="pb-4 pt-8 text-center text-sm text-muted">
-            <Link to="/" className="text-accent hover:underline">
-              Back to home
-            </Link>
-          </p>
+        <section className="mt-10">
+          {installable.length > 0 ? (
+            <DownloadCards assets={installable} />
+          ) : (
+            <div className="glass-card rounded-2xl px-6 py-12 text-center">
+              <p className="font-medium text-text">No installers available yet</p>
+              <p className="mt-2 text-sm text-muted">
+                Published builds will appear here when ready.
+              </p>
+              <Link
+                to="/home"
+                className="mt-6 inline-block text-sm text-accent no-underline hover:underline"
+              >
+                Back to home
+              </Link>
+            </div>
+          )}
         </section>
       </main>
       <Footer />

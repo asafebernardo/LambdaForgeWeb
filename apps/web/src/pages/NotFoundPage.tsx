@@ -9,7 +9,7 @@ export function NotFoundPage() {
       <main className="mx-auto max-w-6xl px-4 py-20 text-center">
         <h1 className="text-3xl font-semibold">Page not found</h1>
         <p className="mt-2 text-muted">The page you are looking for does not exist.</p>
-        <Link to="/" className="mt-6 inline-block text-accent no-underline hover:underline">
+        <Link to="/home" className="mt-6 inline-block text-accent no-underline hover:underline">
           Back to home
         </Link>
       </main>

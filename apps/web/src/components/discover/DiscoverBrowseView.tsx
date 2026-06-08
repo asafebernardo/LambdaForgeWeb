@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Game } from "@lambda-forge/types";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { DiscoverShell } from "./DiscoverShell";
@@ -25,14 +26,24 @@ export function DiscoverBrowseView({ games, loading }: DiscoverBrowseViewProps) 
   return (
     <DiscoverShell>
       <header className="shrink-0 border-b border-border px-6 py-5 sm:px-8">
-        <h1 className="font-display text-2xl font-semibold">Discover Mods</h1>
-        <p className="mt-1 text-sm text-muted">
-          {loading
-            ? "Loading game library…"
-            : filteredGames.length > 0
-              ? `${filteredGames.length} games — pick one to browse its mod catalog`
-              : "Pick a game from the library to browse mods"}
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="font-display text-2xl font-semibold">Discover Mods</h1>
+            <p className="mt-1 text-sm text-muted">
+              {loading
+                ? "Loading game library…"
+                : filteredGames.length > 0
+                  ? `${filteredGames.length} games — pick one to browse mods`
+                  : "Pick a game from the library to browse mods"}
+            </p>
+          </div>
+          <Link
+            to="/mods/enviar"
+            className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground no-underline transition hover:opacity-90"
+          >
+            Enviar mod
+          </Link>
+        </div>
       </header>
 
       <div className="shrink-0 border-b border-border px-6 py-4 sm:px-8">

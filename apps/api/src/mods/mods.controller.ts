@@ -22,7 +22,6 @@ import {
   CreateCommentDto,
   ListCommentsQueryDto,
 } from "./dto/mods.dto";
-import { Public } from "../common/decorators/public.decorator";
 import { JwtAuthGuard } from "../common/guards/jwt-auth.guard";
 import { OptionalJwtAuthGuard } from "../common/guards/optional-jwt.guard";
 import { CurrentUser, AuthUser } from "../common/decorators/current-user.decorator";
@@ -31,13 +30,11 @@ import { CurrentUser, AuthUser } from "../common/decorators/current-user.decorat
 export class ModsController {
   constructor(private mods: ModsService) {}
 
-  @Public()
   @Get()
   list(@Query() query: ListModsQueryDto) {
     return this.mods.list(query);
   }
 
-  @Public()
   @Get(":slug")
   findBySlug(@Param("slug") slug: string) {
     return this.mods.findBySlug(slug);
@@ -75,7 +72,6 @@ export class ModsController {
     return this.mods.publish(id, user);
   }
 
-  @Public()
   @UseGuards(OptionalJwtAuthGuard)
   @Get(":id/download")
   download(
@@ -87,7 +83,6 @@ export class ModsController {
     return this.mods.download(id, user, ip);
   }
 
-  @Public()
   @Get(":id/ratings")
   getRatings(@Param("id") id: string) {
     return this.mods.getRatings(id);
@@ -103,7 +98,6 @@ export class ModsController {
     return this.mods.rate(id, dto, user);
   }
 
-  @Public()
   @Get(":id/comments")
   listComments(@Param("id") id: string, @Query() query: ListCommentsQueryDto) {
     return this.mods.listComments(id, query);

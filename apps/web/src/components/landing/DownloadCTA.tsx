@@ -6,6 +6,7 @@ import {
   isDownloadAvailable,
   resolveDownloadHref,
 } from "@/lib/downloads";
+import { FeatureIcon } from "./FeatureIcon";
 
 function WindowsIcon() {
   return (
@@ -15,15 +16,9 @@ function WindowsIcon() {
   );
 }
 
-/** Tux — Linux mascot (white belly, black body, orange beak & feet). */
 function TuxIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-5 w-5 shrink-0"
-      aria-hidden
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" aria-hidden>
       <path
         fill="#1a1a1a"
         d="M12 2C7.03 2 3 6.03 3 11c0 2.55 1.08 4.85 2.8 6.5C4.95 19.35 4 21.5 4 23.5V24h16v-.5c0-2-1-4.15-1.8-6C19.92 15.85 21 13.55 21 11c0-4.97-4.03-9-9-9z"
@@ -40,11 +35,12 @@ function TuxIcon() {
 }
 
 interface DownloadCTAProps {
-  size?: "hero" | "nav";
+  size?: "hero" | "nav" | "footer";
+  align?: "center" | "start";
 }
 
 const btnBase =
-  "group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl font-semibold no-underline transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]";
+  "group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-xl font-semibold no-underline transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 function DownloadLink({
   href,
@@ -58,7 +54,7 @@ function DownloadLink({
   children: ReactNode;
 }) {
   const shimmer = (
-    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-white/0 via-white/15 to-white/0 transition-transform duration-500 group-hover:translate-x-full" />
   );
 
   if (external) {
@@ -87,10 +83,11 @@ function DownloadLink({
   );
 }
 
-export function DownloadCTA({ size = "hero" }: DownloadCTAProps) {
+export function DownloadCTA({ size = "hero", align = "center" }: DownloadCTAProps) {
   const manifest = getDownloadsManifest();
   const version = manifest.version;
   const isHero = size === "hero";
+  const isFooter = size === "footer";
 
   const windowsHref = resolveDownloadHref("windows", "windows");
   const debHref = resolveDownloadHref("linux-deb", "linux-deb");
@@ -98,12 +95,15 @@ export function DownloadCTA({ size = "hero" }: DownloadCTAProps) {
   const debExternal = isDownloadAvailable("linux-deb");
   const debTitle = getDownloadAsset("linux-deb")?.title ?? "Debian package (.deb)";
 
-  if (!isHero) {
+  const alignClass = align === "start" ? "items-start" : "items-center";
+  const justifyClass = align === "start" ? "justify-start" : "justify-center";
+
+  if (size === "nav") {
     return (
       <DownloadLink
         href="/download"
         external={false}
-        className={`btn-primary ${btnBase} px-4 py-2 text-sm`}
+        className={`btn-primary ${btnBase} px-4 py-2 text-sm shadow-accent`}
       >
         <WindowsIcon />
         <span>Download</span>
@@ -112,12 +112,14 @@ export function DownloadCTA({ size = "hero" }: DownloadCTAProps) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div className="flex flex-wrap items-center justify-center gap-3">
+    <div className={`flex flex-col gap-3 ${alignClass}`}>
+      <div className={`flex flex-wrap gap-3 ${justifyClass}`}>
         <DownloadLink
           href={windowsHref}
           external={windowsExternal}
-          className={`btn-primary ${btnBase} px-6 py-3.5 text-sm sm:px-8 sm:py-4 sm:text-base`}
+          className={`btn-primary ${btnBase} ${
+            isFooter ? "px-8 py-4 text-base" : "px-6 py-3.5 text-sm sm:px-8 sm:py-4 sm:text-base"
+          } shadow-accent-lg`}
         >
           <WindowsIcon />
           <span>Download for Windows</span>
@@ -126,16 +128,31 @@ export function DownloadCTA({ size = "hero" }: DownloadCTAProps) {
         <DownloadLink
           href={debHref}
           external={debExternal}
-          className={`btn-secondary ${btnBase} px-6 py-3.5 text-sm sm:px-8 sm:py-4 sm:text-base`}
+          className={`btn-secondary ${btnBase} ${
+            isFooter ? "px-8 py-4 text-base" : "px-6 py-3.5 text-sm sm:px-8 sm:py-4 sm:text-base"
+          }`}
         >
           <TuxIcon />
-          <span>Download .deb (Linux)</span>
+          <span>Linux (.deb)</span>
         </DownloadLink>
       </div>
-      <p className="text-center text-xs text-muted">
-        v{version} · 64-bit · {debTitle}
-        {!debExternal && !windowsExternal && " · Installers on the download page"}
-      </p>
+
+      {isHero && (
+        <div className={`flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted ${justifyClass}`}>
+          <span className="inline-flex items-center gap-1">
+            <FeatureIcon name="code" className="h-3 w-3 text-accent/70" />
+            v{version} · 64-bit
+          </span>
+          <span>·</span>
+          <span>{debTitle}</span>
+          {!debExternal && !windowsExternal && (
+            <>
+              <span>·</span>
+              <span>Installers on download page</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

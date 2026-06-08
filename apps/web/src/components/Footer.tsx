@@ -17,10 +17,10 @@ export function Footer() {
     {
       title: "Product",
       links: [
-        { label: CAPY_LAUNCHER_NAME, href: "/launcher" },
+        { label: CAPY_LAUNCHER_NAME, href: "/home" },
         { label: "Mods", href: "/mods" },
         { label: "Download", href: "/download" },
-        { label: "Supported games", href: "/launcher#games" },
+        { label: "Supported games", href: "/home#games" },
         { label: "Roadmap", href: ROADMAP_URL, external: true },
       ],
     },

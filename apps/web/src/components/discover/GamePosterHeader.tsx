@@ -42,7 +42,7 @@ export function GamePosterHeader({ game, onBack }: GamePosterHeaderProps) {
           <h1 className="font-display truncate text-xl font-semibold sm:text-2xl">{game.name}</h1>
           <p className="mt-0.5 text-sm text-muted">
             {(game.modCount ?? 0) > 0
-              ? `${game.modCount} mods in catalog`
+              ? `${game.modCount} community mods`
               : "Browse and download community mods"}
           </p>
         </div>

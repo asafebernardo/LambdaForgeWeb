@@ -1,19 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Game, ModDetail, Category } from "@lambda-forge/types";
-import { fetchCategories, sdk } from "@/lib/api";
-import { gameCoverUrl } from "@/lib/config";
+import { Link } from "react-router-dom";
+import type { Game, ModSummary } from "@lambda-forge/types";
+import { sdk } from "@/lib/api";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { ModCard } from "@/components/mods/ModCard";
 import { DiscoverShell } from "./DiscoverShell";
 import { GamePosterHeader } from "./GamePosterHeader";
-import { CategorySidebar } from "./CategorySidebar";
-import { ModQuickFilters, quickFilterToSort, type QuickFilterId } from "./ModQuickFilters";
-import { ModStoreSearch, useSearchSuggestions } from "./ModStoreSearch";
 import { ModStorePagination } from "./ModStorePagination";
-import {
-  ModCardSkeletonGrid,
-  ModFeaturedBanner,
-  ModStoreCard,
-} from "./ModStoreCard";
+
+type SortId = "recent" | "popular" | "rating";
 
 interface DiscoverStoreViewProps {
   game: Game;
@@ -21,38 +16,23 @@ interface DiscoverStoreViewProps {
 }
 
 export function DiscoverStoreView({ game, onBack }: DiscoverStoreViewProps) {
-  const cover = gameCoverUrl(game);
-
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 350);
-  const [quickFilter, setQuickFilter] = useState<QuickFilterId>("all");
-  const [categorySlug, setCategorySlug] = useState<string | null>(null);
+  const [sort, setSort] = useState<SortId>("recent");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(24);
 
-  const [mods, setMods] = useState<ModDetail[]>([]);
+  const [mods, setMods] = useState<ModSummary[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setCategoriesLoading(true);
-    fetchCategories()
-      .then(setCategories)
-      .finally(() => setCategoriesLoading(false));
-  }, []);
-
-  const loadCatalog = useCallback(async () => {
+  const loadMods = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const sort = quickFilterToSort(quickFilter) as "recent" | "popular" | "rating";
       const res = await sdk.listMods({
         game: game.slug,
-        category: categorySlug ?? undefined,
         q: debouncedSearch.trim() || undefined,
         sort,
         page,
@@ -67,149 +47,126 @@ export function DiscoverStoreView({ game, onBack }: DiscoverStoreViewProps) {
     } finally {
       setLoading(false);
     }
-  }, [game.slug, categorySlug, debouncedSearch, quickFilter, page, perPage]);
+  }, [game.slug, debouncedSearch, sort, page, perPage]);
 
   useEffect(() => {
-    void loadCatalog();
-  }, [loadCatalog]);
+    void loadMods();
+  }, [loadMods]);
 
   const totalPages = Math.max(1, Math.ceil(total / perPage));
-  const suggestions = useSearchSuggestions(mods, search);
-
-  const featuredMod =
-    quickFilter === "all" && !debouncedSearch.trim() && page === 1 && mods.length > 0
-      ? [...mods].sort((a, b) => b.downloadCount - a.downloadCount)[0]
-      : null;
-
-  const gridMods = featuredMod
-    ? mods.filter((m) => m.id !== featuredMod.id)
-    : mods;
-
-  function handleQuickFilter(id: QuickFilterId) {
-    setQuickFilter(id);
-    setPage(1);
-  }
-
-  function handleCategorySelect(slug: string | null) {
-    setCategorySlug(slug);
-    setPage(1);
-  }
-
-  function handleSearchCommit() {
-    setPage(1);
-  }
 
   return (
     <DiscoverShell>
       <GamePosterHeader game={game} onBack={onBack} />
 
-      <div className="flex min-h-0 flex-1">
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="shrink-0 space-y-4 border-b border-border px-6 py-4 sm:px-8">
-            <div>
-              <label htmlFor="mod-store-search" className="sr-only">
-                Search mods
-              </label>
-              <ModStoreSearch
-                value={search}
-                onChange={setSearch}
-                suggestions={suggestions}
-                onCommit={handleSearchCommit}
-              />
-            </div>
-
-            <ModQuickFilters value={quickFilter} onChange={handleQuickFilter} />
-
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
-              <span>
-                {loading
-                  ? "Loading…"
-                  : total > 0
-                    ? `${total.toLocaleString()} mods`
-                    : "No mods found"}
-              </span>
-              <div className="flex items-center gap-2 lg:hidden">
-                <select
-                  aria-label="Category"
-                  value={categorySlug ?? ""}
-                  onChange={(e) =>
-                    handleCategorySelect(e.target.value || null)
-                  }
-                  className="rounded-lg border border-border bg-bg px-2 py-1 text-xs text-text"
-                >
-                  <option value="">All categories</option>
-                  {categories.map((cat) => (
-                    <option key={cat.slug} value={cat.slug}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {categorySlug && (
-                <button
-                  type="button"
-                  onClick={() => handleCategorySelect(null)}
-                  className="text-accent hover:underline"
-                >
-                  Clear category filter
-                </button>
-              )}
-            </div>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="shrink-0 space-y-4 border-b border-border px-6 py-4 sm:px-8">
+          <div className="relative min-w-0">
+            <label htmlFor="mod-store-search" className="sr-only">
+              Search mods
+            </label>
+            <svg
+              viewBox="0 0 24 24"
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.3-4.3" />
+            </svg>
+            <input
+              id="mod-store-search"
+              type="search"
+              placeholder="Search mods…"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full rounded-lg border border-border bg-card/60 py-2.5 pl-10 pr-3 text-sm text-text backdrop-blur-sm placeholder:text-muted focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/30"
+            />
           </div>
 
-          <div className="flex-1 overflow-y-auto px-6 py-4 sm:px-8">
-            {error && (
-              <div className="mb-4 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
-                {error}
-              </div>
-            )}
-
-            {loading ? (
-              <ModCardSkeletonGrid count={perPage > 12 ? 9 : 6} />
-            ) : mods.length === 0 ? (
-              <div className="flex h-48 flex-col items-center justify-center rounded-2xl border border-dashed border-border text-muted">
-                <p>No mods match your filters.</p>
-                <p className="mt-1 text-xs">Try another category or search term.</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {featuredMod && (
-                  <ModFeaturedBanner mod={featuredMod} gameCover={cover} />
-                )}
-
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                  {gridMods.map((mod) => (
-                    <ModStoreCard key={mod.id} mod={mod} gameCover={cover} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {total > 0 && (
-            <div className="shrink-0 px-6 pb-4 sm:px-8">
-              <ModStorePagination
-                page={page}
-                totalPages={totalPages}
-                totalCount={total}
-                perPage={perPage}
-                loading={loading}
-                onPageChange={setPage}
-                onPerPageChange={(n) => {
-                  setPerPage(n);
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+            <span>
+              {loading
+                ? "Loading…"
+                : total > 0
+                  ? `${total.toLocaleString()} mods`
+                  : "No mods found"}
+            </span>
+            <label className="flex items-center gap-2">
+              Sort
+              <select
+                aria-label="Sort mods"
+                value={sort}
+                onChange={(e) => {
+                  setSort(e.target.value as SortId);
                   setPage(1);
                 }}
-              />
+                className="rounded-lg border border-border bg-bg px-2 py-1 text-xs text-text"
+              >
+                <option value="recent">Recent</option>
+                <option value="popular">Popular</option>
+                <option value="rating">Top rated</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-6 py-4 sm:px-8">
+          {error && (
+            <div className="mb-4 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-40 animate-pulse rounded-lg border border-border bg-card/50"
+                />
+              ))}
+            </div>
+          ) : mods.length === 0 ? (
+            <div className="flex h-48 flex-col items-center justify-center rounded-2xl border border-dashed border-border text-center text-muted">
+              <p>Nenhum mod para {game.name} ainda.</p>
+              <p className="mt-1 text-xs">Seja o primeiro a enviar um.</p>
+              <Link
+                to={`/mods/enviar?game=${encodeURIComponent(game.slug)}`}
+                className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground no-underline hover:opacity-90"
+              >
+                Enviar mod
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {mods.map((mod) => (
+                <ModCard key={mod.id} mod={mod} />
+              ))}
             </div>
           )}
         </div>
 
-        <CategorySidebar
-          categories={categories}
-          loading={categoriesLoading}
-          selectedSlug={categorySlug}
-          onSelect={handleCategorySelect}
-        />
+        {total > perPage && (
+          <div className="shrink-0 px-6 pb-4 sm:px-8">
+            <ModStorePagination
+              page={page}
+              totalPages={totalPages}
+              totalCount={total}
+              perPage={perPage}
+              loading={loading}
+              onPageChange={setPage}
+              onPerPageChange={(n) => {
+                setPerPage(n);
+                setPage(1);
+              }}
+            />
+          </div>
+        )}
       </div>
     </DiscoverShell>
   );

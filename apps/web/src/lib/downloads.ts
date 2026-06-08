@@ -19,3 +19,7 @@ export function resolveDownloadHref(assetId: string, fallbackHash?: string): str
 export function isDownloadAvailable(assetId: string): boolean {
   return Boolean(getDownloadAsset(assetId)?.url);
 }
+
+export function getInstallableAssets(): DownloadAsset[] {
+  return getDownloadsManifest().assets.filter((a) => Boolean(a.url));
+}

@@ -3,8 +3,8 @@ import { CAPY_LAUNCHER_NAME } from "@/lib/config";
 export function LauncherMockup() {
   return (
     <div className="launcher-mockup relative mx-auto w-full max-w-2xl">
-      <div className="absolute -inset-4 rounded-2xl bg-accent/10 blur-3xl" aria-hidden />
-      <div className="relative overflow-hidden rounded-xl border border-border/80 bg-[#111113] shadow-[0_24px_80px_rgba(0,0,0,0.55),0_0_0_1px_rgba(232,93,4,0.08)]">
+      <div className="absolute -inset-6 rounded-3xl bg-accent/12 blur-3xl" aria-hidden />
+      <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-[#111113] shadow-[0_28px_90px_rgba(0,0,0,0.6),0_0_0_1px_rgba(232,93,4,0.1),inset_0_1px_0_rgba(255,255,255,0.04)]">
         {/* Title bar */}
         <div className="flex items-center gap-2 border-b border-border/60 bg-[#111113]/90 px-4 py-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-[#f87171]" />

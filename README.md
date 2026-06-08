@@ -23,9 +23,10 @@ Full stack reference: [docs/TECNOLOGIAS.md](docs/TECNOLOGIAS.md)
 
 | Route | Description |
 |-------|-------------|
-| `/` | Launcher landing + supported games |
+| `/home` | Launcher landing + supported games |
+| `/` | Redirects to `/home` |
 | `/download` | Launcher installer download |
-| `/mods` | Global mod catalog with filters |
+| `/mods` | Mod library (login required) |
 | `/games/[slug]` | Mods for one game |
 | `/mods/[slug]` | Mod detail, ratings, comments |
 | `/mods/upload` | Upload flow (auth required) |

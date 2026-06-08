@@ -293,8 +293,15 @@ model IndexedMod {
   authorId           String?
   authorName         String?
   gameId             String?
-  categoryExternalId String?
-  categoryName       String?
+  categoryExternalId    String?
+  categoryName          String?
+  rootCategoryName      String?
+  rootCategoryExternalId String?
+  rootCategoryIconUrl   String?
+  subCategoryName       String?
+  subCategoryExternalId String?
+  subCategoryIconUrl    String?
+  isNsfw             Boolean        @default(false)
   views              Int            @default(0)
   downloads          Int            @default(0)
   likes              Int            @default(0)

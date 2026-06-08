@@ -1,6 +1,6 @@
 # Supabase setup (CapyMods)
 
-Auth and optional file storage use [Supabase](https://supabase.com). The NestJS API still owns mods, games, and the indexer; Supabase replaces custom JWT + bcrypt.
+Auth and optional file storage use [Supabase](https://supabase.com). The NestJS API still owns mods and games; Supabase replaces custom JWT + bcrypt.
 
 ## 1. Create a project
 

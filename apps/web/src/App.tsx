@@ -1,6 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { HomePage } from "@/pages/HomePage";
 import { CapyLauncherPage } from "@/pages/CapyLauncherPage";
 import { DownloadPage } from "@/pages/DownloadPage";
 import { LoginPage } from "@/pages/LoginPage";
@@ -21,23 +20,23 @@ export default function App() {
       <div className="content-grid" aria-hidden />
       <div className="relative z-10">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/launcher" element={<CapyLauncherPage />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<CapyLauncherPage />} />
+          <Route path="/launcher" element={<Navigate to="/home" replace />} />
           <Route path="/download" element={<DownloadPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          <Route path="/mods" element={<ModsPage />} />
-          <Route path="/mods/games/:gameSlug" element={<GameModsPage />} />
-          <Route path="/games/:slug" element={<GamePage />} />
           <Route path="/users/:username" element={<UserPage />} />
 
           <Route element={<ProtectedRoute />}>
+            <Route path="/mods" element={<ModsPage />} />
+            <Route path="/mods/games/:gameSlug" element={<GameModsPage />} />
+            <Route path="/mods/enviar" element={<ModUploadPage />} />
             <Route path="/mods/upload" element={<ModUploadPage />} />
             <Route path="/mods/:slug/edit" element={<ModEditPage />} />
+            <Route path="/mods/:slug" element={<ModDetailPage />} />
+            <Route path="/games/:slug" element={<GamePage />} />
           </Route>
-
-          <Route path="/mods/:slug" element={<ModDetailPage />} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
